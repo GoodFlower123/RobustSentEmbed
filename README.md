@@ -12,7 +12,7 @@ LAMBDA=0.005
     --model_name_or_path bert-base-uncased \
     --generator_name distilbert-base-uncased \
     --train_file data/wiki1m_for_simcse.txt \
-    --output_dir /data/long/jasl/RNLP/result/DiffSCE3_bert \
+    --output_dir /data/long/jasl/RNLP/result/RobustSCE3_bert \
     --num_train_epochs 2 \
     --per_device_train_batch_size 64 \
     --learning_rate 7e-6 \
@@ -34,17 +34,17 @@ LAMBDA=0.005
     --fp16 --masking_ratio 0.20
 ```
 
-#### Evaluate the RobustEmbed embeddings on STS and Transfer tasks
+#### Evaluate the RobustSentEmbed embeddings on STS and Transfer tasks
 ```bash
 LR=7e-6
 MASK=0.30
 LAMBDA=0.005
 
 !python train.py \
-    --model_name_or_path /data/long/jasl/RNLP/result/DiffSCE3_bert \
+    --model_name_or_path /data/long/jasl/RNLP/result/RobustSCE3_bert \
     --generator_name distilbert-base-uncased \
     --train_file data/wiki1m_for_simcse.txt \
-    --output_dir /data/long/jasl/RNLP/result/DiffSCE3_bert_eval \
+    --output_dir /data/long/jasl/RNLP/result/RobustSCE3_bert_eval \
     --num_train_epochs 2 \
     --per_device_train_batch_size 64 \
     --learning_rate $LR \
@@ -65,8 +65,8 @@ LAMBDA=0.005
 
 ```
 
-#### Evaluate the RobustEmbed embeddings using various adversarial attack techniques.
-The following code snippet evaluates the RobustEmbed embeddings using the TextFooler adversarial attack for the IMDB task. Users can switch to different adversarial attacks by uncommenting the corresponding attack technique in the code. Additionally, users can load another dataset (e.g., sst2 or cola) to assess the embeddings for a different task.
+#### Evaluate the RobustSentEmbed embeddings using various adversarial attack techniques.
+The following code snippet evaluates the RobustSentEmbed embeddings using the TextFooler adversarial attack for the IMDB task. Users can switch to different adversarial attacks by uncommenting the corresponding attack technique in the code. Additionally, users can load another dataset (e.g., sst2 or cola) to assess the embeddings for a different task.
 
 ```python
 import textattack
@@ -82,7 +82,7 @@ train_dataset = textattack.datasets.HuggingFaceDataset(mnli_dataset['train'].shu
 eval_dataset = textattack.datasets.HuggingFaceDataset(mnli_dataset['test'].shuffle())
 
 
-model_name = '/result/SimSCE12_bert'
+model_name = '/data/long/jasl/RNLP/result/RobustSCE3_bert'
 config = transformers.AutoConfig.from_pretrained(pretrained_model_name_or_path = model_name, num_labels=num_labels)
 model = BertForAT.from_pretrained(pretrained_model_name_or_path = model_name, config=config)         
 tokenizer = transformers.AutoTokenizer.from_pretrained(model_name, do_lower_case= True)
