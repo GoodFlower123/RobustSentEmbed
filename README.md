@@ -1,5 +1,5 @@
 # RobustSentEmbed
-a self-supervised sentence embedding framework that enhances both generalization and robustness benchmarks
+A self-supervised sentence embedding framework that enhances both generalization and robustness benchmarks
 
 
 #### Train the RobustSentEmbed embeddings to generate robust text represnetation
@@ -8,12 +8,11 @@ LR=7e-6
 MASK=0.30
 LAMBDA=0.005
 
-#!python train.py \
 !python -m torch.distributed.launch --nproc_per_node 4 --master_port $(expr $RANDOM + 1000) train.py \
     --model_name_or_path bert-base-uncased \
     --generator_name distilbert-base-uncased \
     --train_file data/wiki1m_for_simcse.txt \
-    --output_dir /data/long/jasl/RNLP/result/DiffSCE7_bert \
+    --output_dir /data/long/jasl/RNLP/result/DiffSCE3_bert \
     --num_train_epochs 2 \
     --per_device_train_batch_size 64 \
     --learning_rate 7e-6 \
@@ -37,24 +36,33 @@ LAMBDA=0.005
 
 #### Evaluate the RobustEmbed embeddings on STS and Transfer tasks
 ```bash
-python -m torch.distributed.launch --nproc_per_node 4 --master_port $(expr $RANDOM + 1000) train2.py \
-    --model_name_or_path /result/SimSCE12_bert \
+LR=7e-6
+MASK=0.30
+LAMBDA=0.005
+
+!python train.py \
+    --model_name_or_path /data/long/jasl/RNLP/result/DiffSCE3_bert \
+    --generator_name distilbert-base-uncased \
     --train_file data/wiki1m_for_simcse.txt \
-    --output_dir /result/SimSCE12_bert \
-    --num_train_epochs 1 \
+    --output_dir /data/long/jasl/RNLP/result/DiffSCE3_bert_eval \
+    --num_train_epochs 2 \
     --per_device_train_batch_size 64 \
-    --learning_rate 3e-5 \
+    --learning_rate $LR \
     --max_seq_length 32 \
     --evaluation_strategy steps \
-    --metric_for_best_model eval_avg_sts \
+    --metric_for_best_model stsb_spearman \
     --load_best_model_at_end \
     --eval_steps 125 \
     --pooler_type cls \
     --mlp_only_train \
     --overwrite_output_dir \
+    --logging_first_step \
     --temp 0.05 \
     --do_eval \
-    --fp16 \
+    --batchnorm \
+    --lambda_weight $LAMBDA \
+    --fp16 --masking_ratio $MASK
+
 ```
 
 #### Evaluate the RobustEmbed embeddings using various adversarial attack techniques.
