@@ -12,7 +12,7 @@ LAMBDA=0.005
     --model_name_or_path bert-base-uncased \
     --generator_name distilbert-base-uncased \
     --train_file data/wiki1m_for_simcse.txt \
-    --output_dir /data/long/jasl/RNLP/result/RobustSCE3_bert \
+    --output_dir /data/long/RNLP/result/RobustSCE3_bert \
     --num_train_epochs 2 \
     --per_device_train_batch_size 64 \
     --learning_rate 7e-6 \
@@ -41,10 +41,10 @@ MASK=0.30
 LAMBDA=0.005
 
 !python train.py \
-    --model_name_or_path /data/long/jasl/RNLP/result/RobustSCE3_bert \
+    --model_name_or_path /data/long/RNLP/result/RobustSCE3_bert \
     --generator_name distilbert-base-uncased \
     --train_file data/wiki1m_for_simcse.txt \
-    --output_dir /data/long/jasl/RNLP/result/RobustSCE3_bert_eval \
+    --output_dir /data/long/RNLP/result/RobustSCE3_bert_eval \
     --num_train_epochs 2 \
     --per_device_train_batch_size 64 \
     --learning_rate $LR \
@@ -82,7 +82,7 @@ train_dataset = textattack.datasets.HuggingFaceDataset(mnli_dataset['train'].shu
 eval_dataset = textattack.datasets.HuggingFaceDataset(mnli_dataset['test'].shuffle())
 
 
-model_name = '/data/long/jasl/RNLP/result/RobustSCE3_bert'
+model_name = '/data/long/RNLP/result/RobustSCE3_bert'
 config = transformers.AutoConfig.from_pretrained(pretrained_model_name_or_path = model_name, num_labels=num_labels)
 model = BertForAT.from_pretrained(pretrained_model_name_or_path = model_name, config=config)         
 tokenizer = transformers.AutoTokenizer.from_pretrained(model_name, do_lower_case= True)
